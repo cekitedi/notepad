@@ -6,6 +6,7 @@ public class Person {
     private String name;
     private String surname;
     private String phone;
+    private String email;
 
     public Person() {
         count++;
@@ -42,6 +43,13 @@ public class Person {
         this.phone = phone;
     }
 
+    public String getemail() {
+        return email;
+    }
+
+    public void setemail(String email) {
+        this.email = email;
+    }
     @Override
     public String toString() {
         return "Person{" +
@@ -49,6 +57,7 @@ public class Person {
                 ", name='" + name + '\'' +
                 ", surname='" + surname + '\'' +
                 ", phone='" + phone + '\'' +
-                '}'+count;
+                ", email='" + email + '\'' +
+                '}';
     }
 }
