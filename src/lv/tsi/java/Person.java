@@ -1,23 +1,11 @@
 package lv.tsi.java;
 
-public class Person {
-    private static int count =0; // obscaja peremennaja na vseh
-    private int id;
+public class Person extends Record{ // class nasleduet vsje cto estj v recorde
+
     private String name;
     private String surname;
     private String phone;
     private String email;
-
-    public Person() {
-        count++;
-        id = count;
-    }
-
-    public int getId() {
-        return id;
-    }
-    //public void setId(int id) {
-    //    this.id = id;    }
 
     public String getName() {
         return name;
@@ -50,10 +38,16 @@ public class Person {
     public void setemail(String email) {
         this.email = email;
     }
+
+    @Override
+    public boolean hasSubstring(String str) {
+        return  name.contains(str) || surname.contains(str) || phone.contains(str) || email.contains(str) ;
+    }
+
     @Override
     public String toString() {
         return "Person{" +
-                "id=" + id +
+                "id=" + getId() +
                 ", name='" + name + '\'' +
                 ", surname='" + surname + '\'' +
                 ", phone='" + phone + '\'' +
