@@ -17,6 +17,12 @@ public class Note extends Record{
     }
 
     @Override
+    public void askQuestions() {
+       System.out.println(" Insert note tekst :" );
+        tekst = Main.askString();
+    }
+
+    @Override
     public String toString() {
         return "Note{" +
                 "id=" + getId() + '\'' +

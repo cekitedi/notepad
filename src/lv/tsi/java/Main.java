@@ -1,24 +1,37 @@
 package lv.tsi.java;
 
+import java.sql.Time;
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
  public class Main {
-
-      static Scanner scan = new Scanner(System.in);
+     public final static String DATE_FORMAT ="dd.MM.yyyy"; //constanta
+     public final static DateTimeFormatter DATE_FORMATTER
+             = DateTimeFormatter.ofPattern(DATE_FORMAT);
+     public final static String TIME_FORMAT= "HH.mm";
+     public final static DateTimeFormatter TIME_FORMATTER
+             = DateTimeFormatter.ofPattern(TIME_FORMAT);
+     static Scanner scan = new Scanner(System.in);
       //static List<Person> people = new ArrayList<>();
       static List<Record> recordList = new ArrayList<>(); // mozno budet hranitj vsje, v tom cisle i personi
       public static void main(String[] args) {
          // write your code here
          while (true) {
              System.out.println(" Enter command ");
-             System.out.println(" createperson(cp), createnote(cn), del, list, find, exit :");
+             System.out.println(" createperson(cp), createnote(cn), creminder(cr), del, list, find, exit :");
              String cmd = scan.next();
              switch (cmd) {
                  case "createperson":
                  case "cp":
                      createperson();
+                     break;
+                 case "creminder":
+                 case "cr":
+                     createreminder();
                      break;
                  case "list":
                      showlist();
@@ -46,65 +59,50 @@ import java.util.Scanner;
              }
          }
       }
+     private static void createperson() {
+         Person p = new Person();
+         addRecord(p);
+         //System.out.printf("Person %s %s, phone %s\n", myname, suname,phon);
+     } // create end
 
-     private static void find() {
+     private static void addRecord(Record p) {
+         p.askQuestions();
+         //p.setName(name); p.setSurname(suname); p.setPhone(phone); p.setemail(mail);
+         recordList.add(p);
+         System.out.println(p);
+     }
+     //
+     private static void cnote() {
+         Note p = new Note();
+         //p.askQuestions();
+         //recordList.add(p);
+         addRecord(p);
+     }
+     //
+      private static void createreminder() {
+         var reminder = new Reminder();
+          addRecord(reminder);
+      }
+      // polimorfizm
+      private static void find() {
          System.out.println(" Find what :" );
          String mytxt = askstr();
          for (Record r : recordList) {
-            // if (r instanceof Person) uznatj kakoj eto klass
+            // if (r instanceof Person) // uznatj kakoj eto klass
              if (r.hasSubstring(mytxt)) {
                  System.out.println(r);
              }
          }
-     }
-
-     private static void cnote() {
-         String mytxt;
-         System.out.println(" Insert note tekst :" );
-         mytxt = askstr();
-         Note p = new Note();
-         p.setTekst(mytxt);
-         recordList.add(p);
-         //System.out.println(p);
-         //System.out.printf("Person %s %s, phone %s\n", myname, suname,phon);
-     } // create end
-
-     private static void shownote () {
-         for (Record p : recordList)
-         //for  (int i = 0; i < cnt; i++)
-         {
-             //p = people.get(i);
-             System.out.println(p);
-             //System.out.printf("Person %s %s, phone %s\n", myname, suname,phon);
-         }
-     }
-      private static void createperson() {
-         String myname; String suname; String phon; String mail;
-         System.out.println(" Insert name :" );
-         myname = askstr();
-         //myname =askname();//scan.next();
-         System.out.println(" Insert surname :" );
-         suname = scan.next();
-         System.out.println(" Insert phone :" );
-         do {
-           phon = scan.next();
-           if (phon.length()<5) {
-               System.out.println("Phone length must be >=5");
-           } else {
-               break;
-           }
-         } while (true);  // beskonecnij ciks
-         System.out.println(" Insert email:" );
-         mail = scan.next();
-         Person p = new Person();
-         p.setName(myname);
-         p.setSurname(suname);
-         p.setPhone(phon);
-         p.setemail(mail);
-         recordList.add(p);
-         //System.out.println(p);
-         //System.out.printf("Person %s %s, phone %s\n", myname, suname,phon);
-      } // create end
+      }
+      //
+      private static void shownote () {
+          for (Record p : recordList)
+          //for  (int i = 0; i < cnt; i++)
+          {
+              //p = people.get(i);
+              System.out.println(p);
+          }
+      }
       //
       private static String askstr() {
          var result = new ArrayList<String>();
@@ -126,24 +124,22 @@ import java.util.Scanner;
                 }
       }
       //my variant, only for 2 word
-      private static String askname() {
-         String alln="", fname, ffname;
-         do {
-                 fname = scan.next();
-                 String fn = fname.substring(0, 1);
+      //private static String askname() {
+      //   String alln="", fname, ffname;
+      //   do {
+      //           fname = scan.next();
+      //           String fn = fname.substring(0, 1);
                  //System.out.println("fname=" + fname);
-                 if (fname.startsWith("\"") ||  fname.endsWith("\"")) {
-                     alln= String.join(" ",alln,fname);
-                     if (fname.endsWith("\"")) {
-                         return alln;
-                     }
-                 } else {
-                     return fname;
-                 }
-         }
-         while (true) ;  // beskonecnij ciks
-     }
-     //
+      //           if (fname.startsWith("\"") ||  fname.endsWith("\"")) {
+       //              alln= String.join(" ",alln,fname);
+      //               if (fname.endsWith("\"")) {
+      //                   return alln;
+      //               }
+      //           } else {return fname;
+      //           }
+      //   }
+      //   while (true) ;  // beskonecnij ciks
+     //}
      private static void delete() {
          System.out.println(" Delete Id :");
          //int cnt = people.size();
@@ -167,15 +163,70 @@ import java.util.Scanner;
      private static void showlist () {
          //Person p = new Person();
          int cnt = recordList.size();
-         System.out.println(" Count of persons = "+cnt );
+         //System.out.println(" Count of persons = "+cnt );
          for (Record p : recordList)
-         //for  (int i = 0; i < cnt; i++)
          {
-             //p = people.get(i);
              System.out.println(p);
-             //System.out.printf("Person %s %s, phone %s\n", myname, suname,phon);
          }
      }
+     public static String askString() {
+         var result = new ArrayList<String>();
+         var word = scan.next();
+         if (word.startsWith("\"")) {
+             do {
+                 result.add(word);
+                 if (word.endsWith("\"")) {
+                     String str = String.join(" ", result);
+                     return str.substring(1, str.length() - 1);
+                 }
+                 word = scan.next();
+             } while (true);
+
+         } else {
+             return word;
+         }
+     }
+     //  Simple phone validation
+     private static String askPhone_SIMPLE() {
+         while (true) {
+             String phone = askString();
+             if (phone.length() >= 5) {
+                 return phone; // valid
+             } else {
+                 System.out.println("Phone number is too short (min 5 digits)");
+             }
+         }
+     }
+     // More advanced phone validation Ļ(but still should be treated as an example)
+     public static String askPhone() {
+         while (true) {
+             String phone = askString();
+             // checking if there any characters expect digits, spaces, pluses and dashes
+             if (phone.chars().anyMatch(c -> !Character.isDigit(c) && c != ' ' && c != '+' && c != '-')) {
+                 System.out.println("Only digits, spaces, plus and dash are allowed!");
+                 continue;
+             }
+             // checking how many digits in the entered number (excluding spaces and other non-digits)
+             if (phone.chars().filter(Character::isDigit).count() < 5) {
+                 System.out.println("At least 5 digits in phone number");
+                 continue;
+             }
+             // validation passed
+             return phone;
+         }
+     }
+     //
+     public static LocalDate askDate() {
+         String d = askString();
+         LocalDate date = LocalDate.parse(d, DATE_FORMATTER);
+         return date;
+     }
+     public static LocalTime askTime() {
+         String d = askString();
+         LocalTime time = LocalTime.parse(d, TIME_FORMATTER );
+         return time;
+     }
+     //
      private static void helpinfo() {
          System.out.println(" You cam insert info about person : " );
          System.out.println(" Name Surname Phone (min. length 5 number) email " );

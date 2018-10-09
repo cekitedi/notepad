@@ -40,6 +40,18 @@ public class Person extends Record{ // class nasleduet vsje cto estj v recorde
     }
 
     @Override
+    public void askQuestions() {
+        System.out.println("  Enter name :" );
+        name = Main.askString();
+        System.out.println("  Enter surname :" );
+        surname = Main.askString();
+        System.out.println("  Enter phone:");
+        phone = Main.askPhone();
+        System.out.println("  Enter email:" );
+        email = Main.askString();
+    }
+
+    @Override
     public boolean hasSubstring(String str) {
         return  name.contains(str) || surname.contains(str) || phone.contains(str) || email.contains(str) ;
     }

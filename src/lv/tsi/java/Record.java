@@ -11,6 +11,8 @@ public abstract class Record {
 
     public abstract boolean hasSubstring(String str); // otnositsa i k person i k note
 
+    public abstract void askQuestions();
+
     public int getId() {
         return id;
     }
