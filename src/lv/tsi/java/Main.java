@@ -1,28 +1,29 @@
 package lv.tsi.java;
 
-import java.sql.Time;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
 
- public class Main {
+public class Main {
      public final static String DATE_FORMAT ="dd.MM.yyyy"; //constanta
      public final static DateTimeFormatter DATE_FORMATTER
              = DateTimeFormatter.ofPattern(DATE_FORMAT);
-     public final static String TIME_FORMAT= "HH.mm";
+     public final static String TIME_FORMAT= "HH:mm";
      public final static DateTimeFormatter TIME_FORMATTER
              = DateTimeFormatter.ofPattern(TIME_FORMAT);
-     static Scanner scan = new Scanner(System.in);
-      //static List<Person> people = new ArrayList<>();
-      static List<Record> recordList = new ArrayList<>(); // mozno budet hranitj vsje, v tom cisle i personi
-      public static void main(String[] args) {
+     private static Scanner scan = new Scanner(System.in);
+
+     private static Map<Integer, Record> recordList = new LinkedHashMap<>();
+
+     //static List<Person> people = new ArrayList<>();
+      //static List<Record> recordList = new ArrayList<>(); // mozno budet hranitj vsje, v tom cisle i personi
+
+   public static void main(String[] args) {
          // write your code here
          while (true) {
              System.out.println(" Enter command ");
-             System.out.println(" createperson(cp), createnote(cn), creminder(cr), del, list, find, exit :");
+             System.out.println(" createperson(cp), createnote(cn), creminder(cr), cralarm(ca), show, expired, del, list, find, exit :");
              String cmd = scan.next();
              switch (cmd) {
                  case "createperson":
@@ -33,11 +34,18 @@ import java.util.Scanner;
                  case "cr":
                      createreminder();
                      break;
+                 case "cralarm":
+                 case "ca":
+                     createalarm();
+                     break;
                  case "list":
                      showlist();
                      break;
                  case "del":
-                     delete();
+                     removeById();//delete();
+                     break;
+                 case "show":
+                     showid();
                      break;
                  case "help":
                      helpinfo();
@@ -52,6 +60,8 @@ import java.util.Scanner;
                  case "find":
                      find();
                      break;
+                 case "expired" :
+                      expired();     break;
                  case "exit":
                      return;
                  default:
@@ -59,44 +69,62 @@ import java.util.Scanner;
              }
          }
       }
-     private static void createperson() {
+      private static void expired() {
+          for (Record r : recordList.values()) {
+              if (r instanceof Expirable) { // uznatj kakoj eto klass
+                  Expirable e = (Expirable) r; // prividenie tipa
+                  if (e.isExpired()) {
+                      System.out.println(r);
+                  }
+              }
+          }
+      }
+      private static void createperson() {
          Person p = new Person();
          addRecord(p);
          //System.out.printf("Person %s %s, phone %s\n", myname, suname,phon);
-     } // create end
-
-     private static void addRecord(Record p) {
-         p.askQuestions();
-         //p.setName(name); p.setSurname(suname); p.setPhone(phone); p.setemail(mail);
-         recordList.add(p);
-         System.out.println(p);
-     }
-     //
-     private static void cnote() {
+      } // create end
+      private static void createalarm() {
+        var alarm = new Alarm();
+        addRecord(alarm);
+      }
+      private static void cnote() {
          Note p = new Note();
-         //p.askQuestions();
-         //recordList.add(p);
-         addRecord(p);
-     }
-     //
+          addRecord(p);
+      }
+      //
       private static void createreminder() {
          var reminder = new Reminder();
           addRecord(reminder);
+      }
+      private static void addRecord(Record p) {
+        p.askQuestions();
+        //p.setName(name); p.setSurname(suname); p.setPhone(phone); p.setemail(mail);
+        // recordList.add(p);
+        recordList.put(p.getId(),p);
+        System.out.println(p);
       }
       // polimorfizm
       private static void find() {
          System.out.println(" Find what :" );
          String mytxt = askstr();
-         for (Record r : recordList) {
+          for (Record r : recordList.values()) {
             // if (r instanceof Person) // uznatj kakoj eto klass
              if (r.hasSubstring(mytxt)) {
                  System.out.println(r);
              }
          }
       }
+      private static void showid() {
+          System.out.println("Show Id :");
+          int id = askInt();
+          Record record = recordList.get(id);
+          //System.out.println(recordList.get(id));
+          System.out.println(record);
+      }
       //
       private static void shownote () {
-          for (Record p : recordList)
+          for (Record p : recordList.values())
           //for  (int i = 0; i < cnt; i++)
           {
               //p = people.get(i);
@@ -140,6 +168,21 @@ import java.util.Scanner;
       //   }
       //   while (true) ;  // beskonecnij ciks
      //}
+      private static void removeById() {
+          System.out.println("Enter ID to remove:");
+          int id = askInt();
+          recordList.remove(id);
+      }
+    private static int askInt() {
+        while (true) {
+            try {
+                return scan.nextInt();
+            } catch (InputMismatchException e) {
+                scan.next(); // skip wrong input
+                System.out.println("It isn't a number");
+            }
+        }
+    }
      private static void delete() {
          System.out.println(" Delete Id :");
          //int cnt = people.size();
@@ -164,7 +207,7 @@ import java.util.Scanner;
          //Person p = new Person();
          int cnt = recordList.size();
          //System.out.println(" Count of persons = "+cnt );
-         for (Record p : recordList)
+         for (Record p : recordList.values())
          {
              System.out.println(p);
          }
