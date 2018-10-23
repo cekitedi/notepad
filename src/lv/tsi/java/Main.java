@@ -13,7 +13,6 @@ public class Main {
      public final static DateTimeFormatter TIME_FORMATTER
              = DateTimeFormatter.ofPattern(TIME_FORMAT);
      private static Scanner scan = new Scanner(System.in);
-
      private static Map<Integer, Record> recordList = new LinkedHashMap<>();
 
      //static List<Person> people = new ArrayList<>();
